@@ -21,21 +21,21 @@
 //  • Two-Stack Undo/Redo → Application tracker (AppTracker)
 // ============================================================
 
-#include "include/Models.h"
-#include "include/Trie.h"
-#include "include/SHA256.h"
-#include "include/LRUCache.h"
-#include "include/MaxHeap.h"
-#include "include/AStarCareer.h"
-#include "include/MarkovChain.h"
-#include "include/UnionFind.h"
-#include "include/RabinKarp.h"
-#include "include/DPSalary.h"
-#include "include/UserManager.h"
-#include "include/JobEngine.h"
-#include "include/AppTracker.h"
-#include "include/RecommendationEngine.h"
-#include "include/Dataset.h"
+#include "Models.h"
+#include "Trie.h"
+#include "SHA256.h"
+#include "LRUCache.h"
+#include "MaxHeap.h"
+#include "AStarCareer.h"
+#include "MarkovChain.h"
+#include "UnionFind.h"
+#include "RabinKarp.h"
+#include "DPSalary.h"
+#include "UserManager.h"
+#include "JobEngine.h"
+#include "AppTracker.h"
+#include "RecommendationEngine.h"
+#include "Dataset.h"
 
 #include <iostream>
 #include <string>
