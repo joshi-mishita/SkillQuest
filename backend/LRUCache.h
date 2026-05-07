@@ -10,6 +10,8 @@
 #include <vector>
 #include <iostream>
 
+using namespace std;
+
 template<typename K, typename V>
 class LRUCache {
 public:
@@ -44,24 +46,24 @@ public:
     bool contains(const K& key) const { return map.count(key) > 0; }
 
     // Return all keys in MRU→LRU order
-    std::vector<K> keys() const {
-        std::vector<K> out;
+    vector<K> keys() const {
+        vector<K> out;
         for (auto& [k, v] : order) out.push_back(k);
         return out;
     }
 
     // Return all values in MRU→LRU order
-    std::vector<V> values() const {
-        std::vector<V> out;
+    vector<V> values() const {
+        vector<V> out;
         for (auto& [k, v] : order) out.push_back(v);
         return out;
     }
 
-    void display(const std::string& label = "Recent Searches") const {
-        std::cout << "\n  [" << label << "]\n";
+    void display(const string& label = "Recent Searches") const {
+        cout << "\n  [" << label << "]\n";
         int i = 1;
         for (auto& [k, v] : order)
-            std::cout << "  " << i++ << ". " << k << "\n";
+            cout << "  " << i++ << ". " << k << "\n";
     }
 
     int size() const { return (int)order.size(); }
@@ -69,6 +71,6 @@ public:
 
 private:
     int cap;
-    std::list<std::pair<K, V>> order;       // front = MRU, back = LRU
-    std::unordered_map<K, typename std::list<std::pair<K,V>>::iterator> map;
+    list<pair<K, V>> order;       // front = MRU, back = LRU
+    unordered_map<K, typename list<pair<K,V>>::iterator> map;
 };

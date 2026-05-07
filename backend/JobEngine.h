@@ -20,6 +20,8 @@
 #include <sstream>
 #include <cmath>
 
+using namespace std;
+
 class JobEngine {
 public:
     JobEngine() : searchCache(20) {}
@@ -33,30 +35,30 @@ public:
     }
 
     // ── Autocomplete ───────────────────────────────────────
-    std::vector<std::string> autocomplete(const std::string& prefix) const {
+    vector<string> autocomplete(const string& prefix) const {
         return trie.suggest(prefix, 8);
     }
 
     // ── Search by title (exact or partial) ────────────────
-    std::vector<Job> search(const std::string& query, LRUCache<std::string,int>& cache) {
+    vector<Job> search(const string& query, LRUCache<string,int>& cache) {
         cache.put(query, 1); // track in search history
         trie.incrementFrequency(query);
-        std::string lq = toLower(query);
-        std::vector<Job> result;
+        string lq = toLower(query);
+        vector<Job> result;
         for (auto& j : jobs) {
-            if (toLower(j.title).find(lq) != std::string::npos ||
-                toLower(j.company).find(lq) != std::string::npos)
+            if (toLower(j.title).find(lq) != string::npos ||
+                toLower(j.company).find(lq) != string::npos)
                 result.push_back(j);
         }
         return result;
     }
 
     // ── Filter ─────────────────────────────────────────────
-    std::vector<Job> filter(const std::string& type,
-                             const std::string& level,
+    vector<Job> filter(const string& type,
+                             const string& level,
                              double minSalary,
                              double maxSalary) const {
-        std::vector<Job> result;
+        vector<Job> result;
         for (auto& j : jobs) {
             if (!type.empty() && toLower(j.type) != toLower(type)) continue;
             if (!level.empty() && toLower(j.level) != toLower(level)) continue;
@@ -67,17 +69,17 @@ public:
     }
 
     // ── Top trending jobs (via MaxHeap) ───────────────────
-    std::vector<Job> topTrending(int k = 5) {
+    vector<Job> topTrending(int k = 5) {
         return heap.topK(k);
     }
 
     // ── Recommend based on user skills ────────────────────
     // Score = |user_skills ∩ required_skills| / |required_skills|
-    std::vector<std::pair<Job, double>> recommend(
-        const std::vector<std::string>& userSkills, int topK = 5) const {
+    vector<pair<Job, double>> recommend(
+        const vector<string>& userSkills, int topK = 5) const {
 
-        std::unordered_set<std::string> have(userSkills.begin(), userSkills.end());
-        std::vector<std::pair<Job, double>> scored;
+        unordered_set<string> have(userSkills.begin(), userSkills.end());
+        vector<pair<Job, double>> scored;
         for (auto& j : jobs) {
             if (j.requiredSkills.empty()) continue;
             int match = 0;
@@ -86,67 +88,67 @@ public:
             double score = (100.0 * match) / j.requiredSkills.size();
             scored.push_back({j, score});
         }
-        std::sort(scored.begin(), scored.end(),
+        sort(scored.begin(), scored.end(),
                   [](auto& a, auto& b){ return a.second > b.second; });
         if ((int)scored.size() > topK) scored.resize(topK);
         return scored;
     }
 
     // ── Resume Match via Rabin-Karp ────────────────────────
-    void matchResume(const std::string& resumeText, int topK = 5) const {
-        std::vector<std::pair<Job,double>> scored;
+    void matchResume(const string& resumeText, int topK = 5) const {
+        vector<pair<Job,double>> scored;
         for (auto& j : jobs) {
             double score = RabinKarp::resumeScore(resumeText, j.requiredSkills);
             scored.push_back({j, score});
         }
-        std::sort(scored.begin(), scored.end(),
+        sort(scored.begin(), scored.end(),
                   [](auto& a, auto& b){ return a.second > b.second; });
 
-        std::cout << "\n  ╔══════════════════════════════════════════╗\n";
-        std::cout << "  ║     RESUME MATCH RESULTS (Rabin-Karp)   ║\n";
-        std::cout << "  ╚══════════════════════════════════════════╝\n";
-        for (int i = 0; i < std::min(topK, (int)scored.size()); i++) {
+        cout << "\n  ╔══════════════════════════════════════════╗\n";
+        cout << "  ║     RESUME MATCH RESULTS (Rabin-Karp)   ║\n";
+        cout << "  ╚══════════════════════════════════════════╝\n";
+        for (int i = 0; i < min(topK, (int)scored.size()); i++) {
             auto& [j, score] = scored[i];
             int bar = (int)(score / 100 * 25);
-            std::cout << "  " << std::left << std::setw(28) << j.title
-                      << " [" << std::string(bar,'#') << std::string(25-bar,'-') << "] "
-                      << std::fixed << std::setprecision(1) << score << "%\n";
+            cout << "  " << left << setw(28) << j.title
+                      << " [" << string(bar,'#') << string(25-bar,'-') << "] "
+                      << fixed << setprecision(1) << score << "%\n";
         }
     }
 
     // ── Skill Gap Analysis ─────────────────────────────────
     void skillGapAnalysis(const Job& job,
-                          const std::vector<std::string>& userSkills) const {
-        std::unordered_set<std::string> have(userSkills.begin(), userSkills.end());
-        std::cout << "\n  ╔══════════════════════════════════════════╗\n";
-        std::cout << "  ║     SKILL GAP ANALYSIS                   ║\n";
-        std::cout << "  ╚══════════════════════════════════════════╝\n";
-        std::cout << "  Job: " << job.title << " @ " << job.company << "\n\n";
+                          const vector<string>& userSkills) const {
+        unordered_set<string> have(userSkills.begin(), userSkills.end());
+        cout << "\n  ╔══════════════════════════════════════════╗\n";
+        cout << "  ║     SKILL GAP ANALYSIS                   ║\n";
+        cout << "  ╚══════════════════════════════════════════╝\n";
+        cout << "  Job: " << job.title << " @ " << job.company << "\n\n";
         for (auto& s : job.requiredSkills) {
             if (have.count(s))
-                std::cout << "  ✅ " << s << " (you have this)\n";
+                cout << "  ✅ " << s << " (you have this)\n";
             else
-                std::cout << "  ❌ " << s << " (need to learn)\n";
+                cout << "  ❌ " << s << " (need to learn)\n";
         }
     }
 
     // ── Salary Analysis ────────────────────────────────────
-    void salaryAnalysis(const std::string& title) const {
-        std::string lt = toLower(title);
+    void salaryAnalysis(const string& title) const {
+        string lt = toLower(title);
         double total = 0; int cnt = 0;
         double minS = 1e9, maxS = -1e9;
         for (auto& j : jobs) {
-            if (toLower(j.title).find(lt) != std::string::npos) {
+            if (toLower(j.title).find(lt) != string::npos) {
                 double mid = (j.salaryMin + j.salaryMax) / 2;
                 total += mid; cnt++;
-                minS = std::min(minS, j.salaryMin);
-                maxS = std::max(maxS, j.salaryMax);
+                minS = min(minS, j.salaryMin);
+                maxS = max(maxS, j.salaryMax);
             }
         }
-        if (!cnt) { std::cout << "  No data for: " << title << "\n"; return; }
+        if (!cnt) { cout << "  No data for: " << title << "\n"; return; }
         double avg = total / cnt;
-        std::cout << "\n  💰 Salary Market Analysis for: " << title << "\n";
-        std::cout << "     Min: $" << (int)minS << "  |  Avg: $" << (int)avg
+        cout << "\n  💰 Salary Market Analysis for: " << title << "\n";
+        cout << "     Min: $" << (int)minS << "  |  Avg: $" << (int)avg
                   << "  |  Max: $" << (int)maxS << "\n";
 
         // DP prediction
@@ -160,38 +162,38 @@ public:
     }
 
     // ── Autocorrect ────────────────────────────────────────
-    std::vector<std::pair<std::string,int>> autocorrect(const std::string& query) const {
-        std::vector<std::string> dict;
+    vector<pair<string,int>> autocorrect(const string& query) const {
+        vector<string> dict;
         for (auto& j : jobs) dict.push_back(j.title);
         return DPSalary::suggest(query, dict, 3, 5);
     }
 
     // ── Display helpers ────────────────────────────────────
     void displayJob(const Job& j) const {
-        std::cout << "  ┌──────────────────────────────────────────┐\n";
-        std::cout << "  │ [" << std::setw(3) << j.id << "] " << std::left
-                  << std::setw(37) << j.title << "│\n";
-        std::cout << "  │ Company : " << std::setw(31) << j.company << "│\n";
-        std::cout << "  │ Location: " << std::setw(31) << j.location << "│\n";
-        std::cout << "  │ Type    : " << std::setw(12) << j.type
-                  << "  Level: " << std::setw(15) << j.level << "│\n";
-        std::cout << "  │ Salary  : $" << (int)j.salaryMin/1000 << "k–$"
+        cout << "  ┌──────────────────────────────────────────┐\n";
+        cout << "  │ [" << setw(3) << j.id << "] " << left
+                  << setw(37) << j.title << "│\n";
+        cout << "  │ Company : " << setw(31) << j.company << "│\n";
+        cout << "  │ Location: " << setw(31) << j.location << "│\n";
+        cout << "  │ Type    : " << setw(12) << j.type
+                  << "  Level: " << setw(15) << j.level << "│\n";
+        cout << "  │ Salary  : $" << (int)j.salaryMin/1000 << "k–$"
                   << (int)j.salaryMax/1000 << "k"
-                  << "  Rating: " << std::fixed << std::setprecision(1) << j.rating
+                  << "  Rating: " << fixed << setprecision(1) << j.rating
                   << "⭐  🔥" << j.trending << "│\n";
-        std::cout << "  │ Skills  : ";
-        std::string sk;
+        cout << "  │ Skills  : ";
+        string sk;
         for (int i = 0; i < (int)j.requiredSkills.size(); i++) {
             if (i) sk += ", ";
             sk += j.requiredSkills[i];
         }
         if (sk.size() > 30) sk = sk.substr(0,27) + "...";
-        std::cout << std::left << std::setw(31) << sk << "│\n";
-        std::cout << "  └──────────────────────────────────────────┘\n";
+        cout << left << setw(31) << sk << "│\n";
+        cout << "  └──────────────────────────────────────────┘\n";
     }
 
-    void displayJobs(const std::vector<Job>& jbs) const {
-        if (jbs.empty()) { std::cout << "  (No jobs found)\n"; return; }
+    void displayJobs(const vector<Job>& jbs) const {
+        if (jbs.empty()) { cout << "  (No jobs found)\n"; return; }
         for (auto& j : jbs) displayJob(j);
     }
 
@@ -200,23 +202,23 @@ public:
         return &jobs[index[id]];
     }
 
-    const std::vector<Job>& getAll() const { return jobs; }
+    const vector<Job>& getAll() const { return jobs; }
 
-    std::vector<std::string> allTitles() const {
-        std::vector<std::string> out;
+    vector<string> allTitles() const {
+        vector<string> out;
         for (auto& j : jobs) out.push_back(j.title);
         return out;
     }
 
 private:
-    std::vector<Job> jobs;
-    std::unordered_map<int, size_t> index; // id → vector index
+    vector<Job> jobs;
+    unordered_map<int, size_t> index; // id → vector index
     Trie trie;
     MaxHeap<Job, JobTrendingCmp> heap;
-    LRUCache<std::string, int> searchCache;
+    LRUCache<string, int> searchCache;
 
-    static std::string toLower(std::string s) {
-        for (char& c : s) c = std::tolower((unsigned char)c);
+    static string toLower(string s) {
+        for (char& c : s) c = tolower((unsigned char)c);
         return s;
     }
 };

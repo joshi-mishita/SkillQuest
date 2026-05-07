@@ -16,6 +16,8 @@
 #include <iostream>
 #include <iomanip>
 
+using namespace std;
+
 class AppTracker {
 public:
     // Add a new application
@@ -30,7 +32,7 @@ public:
     }
 
     // Update application status
-    bool updateStatus(int jobId, AppStatus newStatus, const std::string& notes = "") {
+    bool updateStatus(int jobId, AppStatus newStatus, const string& notes = "") {
         if (!apps.count(jobId)) return false;
         AppAction action;
         action.type   = AppAction::UPDATE;
@@ -56,7 +58,7 @@ public:
     // ── UNDO ─────────────────────────────────────────────
     bool undo() {
         if (undoStack.empty()) {
-            std::cout << "  Nothing to undo.\n";
+            cout << "  Nothing to undo.\n";
             return false;
         }
         AppAction action = undoStack.top(); undoStack.pop();
@@ -73,14 +75,14 @@ public:
                 apps[action.before.jobId] = action.before;
                 break;
         }
-        std::cout << "  ↩ Undo successful.\n";
+        cout << "  ↩ Undo successful.\n";
         return true;
     }
 
     // ── REDO ─────────────────────────────────────────────
     bool redo() {
         if (redoStack.empty()) {
-            std::cout << "  Nothing to redo.\n";
+            cout << "  Nothing to redo.\n";
             return false;
         }
         AppAction action = redoStack.top(); redoStack.pop();
@@ -97,43 +99,43 @@ public:
                 apps[action.after.jobId] = action.after;
                 break;
         }
-        std::cout << "  ↪ Redo successful.\n";
+        cout << "  ↪ Redo successful.\n";
         return true;
     }
 
     void display() const {
-        std::cout << "\n  ╔══════════════════════════════════════════╗\n";
-        std::cout << "  ║     JOB APPLICATION TRACKER              ║\n";
-        std::cout << "  ╠══════════════════════════════════════════╣\n";
+        cout << "\n  ╔══════════════════════════════════════════╗\n";
+        cout << "  ║     JOB APPLICATION TRACKER              ║\n";
+        cout << "  ╠══════════════════════════════════════════╣\n";
         if (apps.empty()) {
-            std::cout << "  ║  (No applications yet)                  ║\n";
+            cout << "  ║  (No applications yet)                  ║\n";
         } else {
             for (auto& [id, app] : apps) {
-                std::cout << "  ║  [" << std::setw(3) << id << "] "
-                          << std::left << std::setw(22) << app.jobTitle
-                          << " → " << std::setw(11) << app.statusStr()
+                cout << "  ║  [" << setw(3) << id << "] "
+                          << left << setw(22) << app.jobTitle
+                          << " → " << setw(11) << app.statusStr()
                           << "║\n";
-                std::cout << "  ║       " << std::setw(35) << app.company
+                cout << "  ║       " << setw(35) << app.company
                           << "║\n";
-                std::cout << "  ║       Applied: " << std::setw(27) << app.appliedDate
+                cout << "  ║       Applied: " << setw(27) << app.appliedDate
                           << "║\n";
                 if (!app.notes.empty())
-                    std::cout << "  ║       Note: " << std::setw(29)
+                    cout << "  ║       Note: " << setw(29)
                               << app.notes.substr(0,27) << "║\n";
-                std::cout << "  ╠══════════════════════════════════════════╣\n";
+                cout << "  ╠══════════════════════════════════════════╣\n";
             }
         }
-        std::cout << "  ║  Undo stack: " << std::setw(3) << undoStack.size()
-                  << "  Redo stack: " << std::setw(3) << redoStack.size()
+        cout << "  ║  Undo stack: " << setw(3) << undoStack.size()
+                  << "  Redo stack: " << setw(3) << redoStack.size()
                   << "              ║\n";
-        std::cout << "  ╚══════════════════════════════════════════╝\n";
+        cout << "  ╚══════════════════════════════════════════╝\n";
     }
 
     bool hasApplied(int jobId) const { return apps.count(jobId); }
     int count() const { return (int)apps.size(); }
 
-    std::vector<int> appliedIds() const {
-        std::vector<int> ids;
+    vector<int> appliedIds() const {
+        vector<int> ids;
         for (auto& [id, _] : apps) ids.push_back(id);
         return ids;
     }
@@ -146,9 +148,9 @@ public:
     }
 
 private:
-    std::unordered_map<int, Application> apps;
-    std::stack<AppAction> undoStack; // past actions
-    std::stack<AppAction> redoStack; // undone actions
+    unordered_map<int, Application> apps;
+    stack<AppAction> undoStack; // past actions
+    stack<AppAction> redoStack; // undone actions
 
     void pushAction(const AppAction& a) {
         undoStack.push(a);

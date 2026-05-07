@@ -7,8 +7,10 @@
 #include "UserManager.h"
 #include <vector>
 
+using namespace std;
+
 inline void loadDummyJobs(JobEngine& engine) {
-    std::vector<Job> jobs = {
+    vector<Job> jobs = {
         {1, "Software Engineer", "Google", "Mountain View, CA", "Full-time", "Mid",
          120000, 180000, {"Python","Java","System Design","REST APIs","Git"}, "", 95, 4.7},
         {2, "Senior Software Engineer", "Amazon", "Seattle, WA", "Full-time", "Senior",

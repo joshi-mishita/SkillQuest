@@ -9,7 +9,9 @@
 #include <functional>
 #include <stdexcept>
 
-template<typename T, typename Compare = std::less<T>>
+using namespace std;
+
+template<typename T, typename Compare = less<T>>
 class MaxHeap {
 public:
     MaxHeap() = default;
@@ -20,12 +22,12 @@ public:
     }
 
     T top() const {
-        if (data.empty()) throw std::runtime_error("Heap is empty");
+        if (data.empty()) throw runtime_error("Heap is empty");
         return data[0];
     }
 
     T pop() {
-        if (data.empty()) throw std::runtime_error("Heap is empty");
+        if (data.empty()) throw runtime_error("Heap is empty");
         T result = data[0];
         data[0] = data.back();
         data.pop_back();
@@ -37,31 +39,31 @@ public:
     int  size()  const { return (int)data.size(); }
 
     // Return top-k elements without destroying heap
-    std::vector<T> topK(int k) {
+    vector<T> topK(int k) {
         MaxHeap<T, Compare> tmp = *this;
-        std::vector<T> result;
+        vector<T> result;
         while (!tmp.empty() && k-- > 0)
             result.push_back(tmp.pop());
         return result;
     }
 
     // Build heap from existing vector (O(n) heapify)
-    void buildFrom(std::vector<T> vec) {
-        data = std::move(vec);
+    void buildFrom(vector<T> vec) {
+        data = move(vec);
         for (int i = (int)data.size() / 2 - 1; i >= 0; i--)
             siftDown(i);
     }
 
-    const std::vector<T>& getData() const { return data; }
+    const vector<T>& getData() const { return data; }
 
 private:
-    std::vector<T> data;
+    vector<T> data;
     Compare cmp;
 
     void siftUp(int i) {
         while (i > 0) {
             int p = (i - 1) / 2;
-            if (cmp(data[p], data[i])) { std::swap(data[p], data[i]); i = p; }
+            if (cmp(data[p], data[i])) { swap(data[p], data[i]); i = p; }
             else break;
         }
     }
@@ -73,7 +75,7 @@ private:
             if (l < n && cmp(data[largest], data[l])) largest = l;
             if (r < n && cmp(data[largest], data[r])) largest = r;
             if (largest == i) break;
-            std::swap(data[i], data[largest]);
+            swap(data[i], data[largest]);
             i = largest;
         }
     }

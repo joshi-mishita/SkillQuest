@@ -11,23 +11,25 @@
 #include <memory>
 #include <algorithm>
 
+using namespace std;
+
 struct TrieNode {
-    std::unordered_map<char, std::unique_ptr<TrieNode>> children;
+    unordered_map<char, unique_ptr<TrieNode>> children;
     bool isEnd = false;
     int frequency = 0; // how many times this job was accessed
 };
 
 class Trie {
 public:
-    Trie() : root(std::make_unique<TrieNode>()) {}
+    Trie() : root(make_unique<TrieNode>()) {}
 
     // Insert a job title into the Trie
-    void insert(const std::string& word) {
+    void insert(const string& word) {
         TrieNode* cur = root.get();
         for (char c : word) {
-            c = std::tolower(c);
+            c = tolower(c);
             if (!cur->children.count(c))
-                cur->children[c] = std::make_unique<TrieNode>();
+                cur->children[c] = make_unique<TrieNode>();
             cur = cur->children[c].get();
         }
         cur->isEnd = true;
@@ -35,10 +37,10 @@ public:
     }
 
     // Increment frequency for a specific word (used when user selects it)
-    void incrementFrequency(const std::string& word) {
+    void incrementFrequency(const string& word) {
         TrieNode* cur = root.get();
         for (char c : word) {
-            c = std::tolower(c);
+            c = tolower(c);
             if (!cur->children.count(c)) return;
             cur = cur->children[c].get();
         }
@@ -46,31 +48,31 @@ public:
     }
 
     // Return up to maxSuggestions completions for a given prefix
-    std::vector<std::string> suggest(const std::string& prefix, int maxSuggestions = 8) const {
+    vector<string> suggest(const string& prefix, int maxSuggestions = 8) const {
         TrieNode* cur = root.get();
-        std::string lp;
+        string lp;
         for (char c : prefix) {
-            c = std::tolower(c);
+            c = tolower(c);
             lp += c;
             if (!cur->children.count(c)) return {};
             cur = cur->children[c].get();
         }
-        std::vector<std::pair<int,std::string>> results;
+        vector<pair<int,string>> results;
         dfs(cur, lp, results);
         // Sort by frequency descending, then alphabetically
-        std::sort(results.begin(), results.end(), [](auto& a, auto& b){
+        sort(results.begin(), results.end(), [](auto& a, auto& b){
             return a.first != b.first ? a.first > b.first : a.second < b.second;
         });
-        std::vector<std::string> out;
-        for (int i = 0; i < std::min((int)results.size(), maxSuggestions); i++)
+        vector<string> out;
+        for (int i = 0; i < min((int)results.size(), maxSuggestions); i++)
             out.push_back(results[i].second);
         return out;
     }
 
-    bool search(const std::string& word) const {
+    bool search(const string& word) const {
         TrieNode* cur = root.get();
         for (char c : word) {
-            c = std::tolower(c);
+            c = tolower(c);
             if (!cur->children.count(c)) return false;
             cur = cur->children[c].get();
         }
@@ -78,10 +80,10 @@ public:
     }
 
 private:
-    std::unique_ptr<TrieNode> root;
+    unique_ptr<TrieNode> root;
 
-    void dfs(TrieNode* node, const std::string& current,
-             std::vector<std::pair<int,std::string>>& results) const {
+    void dfs(TrieNode* node, const string& current,
+             vector<pair<int,string>>& results) const {
         if (node->isEnd)
             results.push_back({node->frequency, current});
         for (auto& [c, child] : node->children)

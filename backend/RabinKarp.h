@@ -12,6 +12,8 @@
 #include <cctype>
 #include <sstream>
 
+using namespace std;
+
 class RabinKarp {
     static constexpr long long BASE  = 31;
     static constexpr long long MOD   = 1e9 + 9;
@@ -21,9 +23,9 @@ class RabinKarp {
 public:
     // Search for all occurrences of pattern in text
     // Returns starting indices (0-based)
-    static std::vector<int> search(const std::string& text,
-                                   const std::string& pattern) {
-        std::vector<int> hits;
+    static vector<int> search(const string& text,
+                                   const string& pattern) {
+        vector<int> hits;
         if (pattern.empty() || pattern.size() > text.size()) return hits;
 
         int n = text.size(), m = pattern.size();
@@ -57,13 +59,13 @@ public:
 
     // Match multiple keywords against resume text
     // Returns map<keyword → occurrences_count>
-    static std::unordered_map<std::string, int>
-    matchKeywords(const std::string& resumeText,
-                  const std::vector<std::string>& keywords) {
-        std::string lower = toLower(resumeText);
-        std::unordered_map<std::string, int> result;
+    static unordered_map<string, int>
+    matchKeywords(const string& resumeText,
+                  const vector<string>& keywords) {
+        string lower = toLower(resumeText);
+        unordered_map<string, int> result;
         for (auto& kw : keywords) {
-            std::string lkw = toLower(kw);
+            string lkw = toLower(kw);
             auto hits = search(lower, lkw);
             result[kw] = (int)hits.size();
         }
@@ -71,8 +73,8 @@ public:
     }
 
     // Score a resume against a job's required skills (0-100)
-    static double resumeScore(const std::string& resumeText,
-                               const std::vector<std::string>& requiredSkills) {
+    static double resumeScore(const string& resumeText,
+                               const vector<string>& requiredSkills) {
         if (requiredSkills.empty()) return 0.0;
         auto matches = matchKeywords(resumeText, requiredSkills);
         int found = 0;
@@ -82,10 +84,10 @@ public:
 
 private:
     static long long toLow(char c) {
-        return std::tolower((unsigned char)c);
+        return tolower((unsigned char)c);
     }
-    static std::string toLower(std::string s) {
-        for (char& c : s) c = std::tolower((unsigned char)c);
+    static string toLower(string s) {
+        for (char& c : s) c = tolower((unsigned char)c);
         return s;
     }
 };

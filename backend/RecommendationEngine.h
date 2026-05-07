@@ -13,17 +13,19 @@
 #include <iostream>
 #include <iomanip>
 
+using namespace std;
+
 class RecommendationEngine {
 public:
     RecommendationEngine() { initializeData(); }
 
     // A* career path from user's current role to target
-    void findCareerPath(const std::string& currentRole,
-                        const std::string& targetRole,
-                        const std::vector<std::string>& userSkills) {
+    void findCareerPath(const string& currentRole,
+                        const string& targetRole,
+                        const vector<string>& userSkills) {
         if (!astar.hasNode(currentRole)) {
-            std::cout << "  Role not in career graph: " << currentRole << "\n";
-            std::cout << "  Try: Software Engineer, Data Scientist, Product Manager, etc.\n";
+            cout << "  Role not in career graph: " << currentRole << "\n";
+            cout << "  Try: Software Engineer, Data Scientist, Product Manager, etc.\n";
             return;
         }
         auto path = astar.findPath(currentRole, targetRole, userSkills);
@@ -31,12 +33,12 @@ public:
     }
 
     // Markov chain: top transitions from current role
-    void showCareerTransitions(const std::string& currentRole) {
+    void showCareerTransitions(const string& currentRole) {
         markov.displayTransitions(currentRole);
     }
 
     // Simulate a random career walk
-    std::vector<std::string> simulateCareerWalk(const std::string& start, int steps=3) {
+    vector<string> simulateCareerWalk(const string& start, int steps=3) {
         return markov.simulateWalk(start, steps);
     }
 
@@ -46,19 +48,19 @@ public:
     }
 
     // Find which cluster a skill belongs to
-    std::string skillCluster(const std::string& skill) {
+    string skillCluster(const string& skill) {
         return uf.getCluster(skill);
     }
 
     // Related skills (same cluster)
-    std::vector<std::string> relatedSkills(const std::string& skill) {
+    vector<string> relatedSkills(const string& skill) {
         auto clusters = uf.getClusters();
-        std::string cluster = uf.getCluster(skill);
+        string cluster = uf.getCluster(skill);
         if (clusters.count(cluster)) {
             auto& members = clusters[cluster];
-            std::vector<std::string> result(members.begin(), members.end());
+            vector<string> result(members.begin(), members.end());
             // Remove the skill itself
-            result.erase(std::remove(result.begin(), result.end(), skill), result.end());
+            result.erase(remove(result.begin(), result.end(), skill), result.end());
             return result;
         }
         return {};
@@ -66,32 +68,32 @@ public:
 
     // Full career analysis dashboard for a user
     void careerDashboard(const User& user) {
-        std::cout << "\n  ╔══════════════════════════════════════════╗\n";
-        std::cout << "  ║     CAREER INSIGHTS DASHBOARD            ║\n";
-        std::cout << "  ╚══════════════════════════════════════════╝\n";
+        cout << "\n  ╔══════════════════════════════════════════╗\n";
+        cout << "  ║     CAREER INSIGHTS DASHBOARD            ║\n";
+        cout << "  ╚══════════════════════════════════════════╝\n";
 
         // Markov transitions
         showCareerTransitions(user.currentRole);
 
         // Skill clusters user belongs to
-        std::cout << "\n  🎯 Your Skill Clusters:\n";
-        std::set<std::string> seen;
+        cout << "\n  🎯 Your Skill Clusters:\n";
+        set<string> seen;
         for (auto& s : user.skills) {
-            std::string cluster = uf.getCluster(s);
+            string cluster = uf.getCluster(s);
             if (!seen.count(cluster)) {
-                std::cout << "     📦 " << cluster << "\n";
+                cout << "     📦 " << cluster << "\n";
                 seen.insert(cluster);
             }
         }
 
         // Simulate walk
-        std::cout << "\n  🎲 Random Career Path Simulation:\n     ";
+        cout << "\n  🎲 Random Career Path Simulation:\n     ";
         auto walk = simulateCareerWalk(user.currentRole, 4);
         for (int i = 0; i < (int)walk.size(); i++) {
-            if (i) std::cout << " → ";
-            std::cout << walk[i];
+            if (i) cout << " → ";
+            cout << walk[i];
         }
-        std::cout << "\n";
+        cout << "\n";
     }
 
     AStarCareer& getAstar() { return astar; }
@@ -155,7 +157,7 @@ private:
         astar.addEdge("Software Engineer","Product Manager", 5);
 
         // ── Markov Chain Transitions ──────────────────────
-        auto addTrans = [&](const std::string& f, const std::string& t, double w) {
+        auto addTrans = [&](const string& f, const string& t, double w) {
             markov.addTransition(f, t, w);
         };
         addTrans("Junior Software Engineer","Software Engineer", 0.80);

@@ -10,13 +10,15 @@
 #include <stdexcept>
 #include <algorithm>
 
+using namespace std;
+
 class UserManager {
 public:
     // Register new user; returns false if username taken
-    bool registerUser(const std::string& username,
-                      const std::string& password,
-                      const std::string& email,
-                      const std::string& currentRole,
+    bool registerUser(const string& username,
+                      const string& password,
+                      const string& email,
+                      const string& currentRole,
                       double currentSalary) {
         if (users.count(username)) return false;
         User u;
@@ -32,17 +34,17 @@ public:
     }
 
     // Login: verify SHA-256 hash
-    bool login(const std::string& username, const std::string& password) {
+    bool login(const string& username, const string& password) {
         if (!users.count(username)) return false;
         return users[username].passwordHash == SHA256::hash(password);
     }
 
-    User* getUser(const std::string& username) {
+    User* getUser(const string& username) {
         if (!users.count(username)) return nullptr;
         return &users[username];
     }
 
-    void addSkill(const std::string& username, const std::string& skill) {
+    void addSkill(const string& username, const string& skill) {
         if (!users.count(username)) return;
         auto& u = users[username];
         if (!u.hasSkill(skill)) {
@@ -53,36 +55,36 @@ public:
     }
 
     void displayProfile(const User& u) const {
-        std::cout << "\n  ╔══════════════════════════════════════════╗\n";
-        std::cout << "  ║           USER PROFILE                   ║\n";
-        std::cout << "  ╚══════════════════════════════════════════╝\n";
-        std::cout << "  👤 Username   : " << u.username << "\n";
-        std::cout << "  📧 Email      : " << u.email << "\n";
-        std::cout << "  💼 Current Role: " << u.currentRole << "\n";
-        std::cout << "  💰 Salary     : $" << (int)u.currentSalary << "\n";
-        std::cout << "  🎮 Level      : " << u.level << " — " << u.levelTitle() << "\n";
-        std::cout << "  ⭐ XP         : " << u.xpPoints
+        cout << "\n  ╔══════════════════════════════════════════╗\n";
+        cout << "  ║           USER PROFILE                   ║\n";
+        cout << "  ╚══════════════════════════════════════════╝\n";
+        cout << "  👤 Username   : " << u.username << "\n";
+        cout << "  📧 Email      : " << u.email << "\n";
+        cout << "  💼 Current Role: " << u.currentRole << "\n";
+        cout << "  💰 Salary     : $" << (int)u.currentSalary << "\n";
+        cout << "  🎮 Level      : " << u.level << " — " << u.levelTitle() << "\n";
+        cout << "  ⭐ XP         : " << u.xpPoints
                   << " / " << User::xpForLevel(u.level+1) << "\n";
-        std::cout << "  🎒 Skills (" << u.skills.size() << "): ";
+        cout << "  🎒 Skills (" << u.skills.size() << "): ";
         for (int i = 0; i < (int)u.skills.size(); i++) {
-            if (i) std::cout << ", ";
-            std::cout << u.skills[i];
+            if (i) cout << ", ";
+            cout << u.skills[i];
         }
-        std::cout << "\n  🏅 Badges     : ";
-        if (u.badges.empty()) std::cout << "(none yet)";
-        for (auto& b : u.badges) std::cout << b << " ";
-        std::cout << "\n\n";
+        cout << "\n  🏅 Badges     : ";
+        if (u.badges.empty()) cout << "(none yet)";
+        for (auto& b : u.badges) cout << b << " ";
+        cout << "\n\n";
     }
 
 private:
-    std::unordered_map<std::string, User> users;
+    unordered_map<string, User> users;
 
     void checkBadges(User& u) {
-        auto award = [&](const std::string& badge, const std::string& icon) {
-            std::string full = icon + " " + badge;
-            if (std::find(u.badges.begin(), u.badges.end(), full) == u.badges.end()) {
+        auto award = [&](const string& badge, const string& icon) {
+            string full = icon + " " + badge;
+            if (find(u.badges.begin(), u.badges.end(), full) == u.badges.end()) {
                 u.badges.push_back(full);
-                std::cout << "  🎉 BADGE UNLOCKED: " << full << "\n";
+                cout << "  🎉 BADGE UNLOCKED: " << full << "\n";
                 u.addXP(200);
             }
         };

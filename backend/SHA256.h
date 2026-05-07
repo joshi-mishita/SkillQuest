@@ -10,9 +10,11 @@
 #include <cstdint>
 #include <array>
 
+using namespace std;
+
 class SHA256 {
 public:
-    static std::string hash(const std::string& input) {
+    static string hash(const string& input) {
         // Initial hash values (first 32 bits of fractional parts of sqrt of first 8 primes)
         uint32_t h[8] = {
             0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
@@ -39,7 +41,7 @@ public:
         };
 
         // Pre-processing: adding padding bits
-        std::string msg = input;
+        string msg = input;
         uint64_t bitLen = msg.size() * 8;
         msg += (char)0x80;
         while (msg.size() % 64 != 56) msg += (char)0x00;
@@ -75,9 +77,9 @@ public:
             h[4]+=e; h[5]+=f; h[6]+=g; h[7]+=hh;
         }
 
-        std::ostringstream oss;
+        ostringstream oss;
         for (int i = 0; i < 8; i++)
-            oss << std::hex << std::setw(8) << std::setfill('0') << h[i];
+            oss << hex << setw(8) << setfill('0') << h[i];
         return oss.str();
     }
 
