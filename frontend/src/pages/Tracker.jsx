@@ -5,172 +5,200 @@ import jobs from "../data/jobs";
 import "../styles/dashboard.css";
 import "../styles/tracker.css";
 
-const statuses = [
-  "All",
+const pipeline = [
   "Applied",
+  "Screening",
   "Interview",
+  "Final Round",
   "Offer",
-  "Rejected",
-  "Withdrawn",
 ];
 
+const statusColors = {
+  Applied: "#6d5dfc",
+  Screening: "#3b82f6",
+  Interview: "#06b6d4",
+  "Final Round": "#f59e0b",
+  Offer: "#22c55e",
+  Rejected: "#ef4444",
+  Withdrawn: "#9ca3af",
+};
+
 function Tracker({ user, setPage, handleLogout }) {
-  const [applications, setApplications] = useState([
-    { id: 1, status: "Applied" },
-    { id: 2, status: "Interview" },
-    { id: 3, status: "Offer" },
-  ]);
-
   const [filter, setFilter] = useState("All");
-  const [history, setHistory] = useState([]);
-  const [redoStack, setRedoStack] = useState([]);
 
-  const mappedApplications = useMemo(() => {
-    const combined = applications.map((app) => {
-      const job = jobs.find((item) => item.id === app.id);
+  const applications = useMemo(() => {
+    return (user.appliedJobIds || []).map((id, index) => {
+      const job = jobs.find((j) => j.id === id);
+
+      const smartStatus =
+        index % 6 === 0
+          ? "Offer"
+          : index % 5 === 0
+          ? "Rejected"
+          : index % 4 === 0
+          ? "Final Round"
+          : index % 3 === 0
+          ? "Interview"
+          : index % 2 === 0
+          ? "Screening"
+          : "Applied";
 
       return {
-        ...app,
-        ...job,
+        id,
+        title: job?.title || "Unknown Job",
+        company: job?.company || "Unknown Company",
+        location: job?.location || "Remote",
+        status: smartStatus,
+        date: `${28 + index} Apr 2026`,
       };
     });
+  }, [user.appliedJobIds]);
 
-    if (filter === "All") return combined;
-
-    return combined.filter((app) => app.status === filter);
+  const filteredApplications = useMemo(() => {
+    if (filter === "All") return applications;
+    return applications.filter((a) => a.status === filter);
   }, [applications, filter]);
 
-  const saveHistory = () => {
-    setHistory((prev) => [...prev, applications]);
-    setRedoStack([]);
-  };
+  const stats = useMemo(() => {
+    const offers = applications.filter(
+      (a) => a.status === "Offer"
+    ).length;
 
-  const updateStatus = (id, status) => {
-    saveHistory();
+    const interviews = applications.filter((a) =>
+      ["Interview", "Final Round"].includes(a.status)
+    ).length;
 
-    setApplications((prev) =>
-      prev.map((app) =>
-        app.id === id ? { ...app, status } : app
-      )
-    );
-  };
+    const rejected = applications.filter(
+      (a) => a.status === "Rejected"
+    ).length;
 
-  const withdraw = (id) => {
-    saveHistory();
-
-    setApplications((prev) =>
-      prev.map((app) =>
-        app.id === id
-          ? { ...app, status: "Withdrawn" }
-          : app
-      )
-    );
-  };
-
-  const undo = () => {
-    if (!history.length) return;
-
-    const previous = history[history.length - 1];
-
-    setRedoStack((prev) => [applications, ...prev]);
-    setApplications(previous);
-    setHistory((prev) => prev.slice(0, -1));
-  };
-
-  const redo = () => {
-    if (!redoStack.length) return;
-
-    const next = redoStack[0];
-
-    setHistory((prev) => [...prev, applications]);
-    setApplications(next);
-    setRedoStack((prev) => prev.slice(1));
-  };
-
-  const stats = {
-    applied: applications.filter((a) => a.status === "Applied").length,
-    interview: applications.filter((a) => a.status === "Interview").length,
-    offer: applications.filter((a) => a.status === "Offer").length,
-    withdrawn: applications.filter((a) => a.status === "Withdrawn").length,
-  };
+    return {
+      total: applications.length,
+      offers,
+      interviews,
+      rejected,
+      rate: applications.length
+        ? Math.round((offers / applications.length) * 100)
+        : 0,
+    };
+  }, [applications]);
 
   return (
     <div className="dashboard-layout">
-      <Sidebar user={user} onLogout={handleLogout} setPage={setPage} />
+      <Sidebar
+        user={user}
+        onLogout={handleLogout}
+        setPage={setPage}
+      />
 
       <main className="dashboard-main">
         <Topbar
           title="Application Tracker"
-          subtitle="Track progress across all applications."
+          subtitle="Track your job applications intelligently."
         />
 
-        <div className="tracker-stats">
-          <div className="mini-card">
-            <h2>{stats.applied}</h2>
-            <p>Applied</p>
+        <div className="stats-grid">
+          <div className="stat-card">
+            <h2>{stats.total}</h2>
+            <p>Total Applications</p>
           </div>
 
-          <div className="mini-card">
-            <h2>{stats.interview}</h2>
-            <p>Interview</p>
+          <div className="stat-card">
+            <h2>{stats.interviews}</h2>
+            <p>Interviews</p>
           </div>
 
-          <div className="mini-card">
-            <h2>{stats.offer}</h2>
-            <p>Offer</p>
+          <div className="stat-card">
+            <h2>{stats.offers}</h2>
+            <p>Offers</p>
           </div>
 
-          <div className="mini-card">
-            <h2>{stats.withdrawn}</h2>
-            <p>Withdrawn</p>
+          <div className="stat-card">
+            <h2>{stats.rate}%</h2>
+            <p>Success Rate</p>
           </div>
+        </div>
+
+        <div className="pipeline-box">
+          {pipeline.map((step) => (
+            <div key={step} className="pipeline-step">
+              {step}
+            </div>
+          ))}
         </div>
 
         <div className="tracker-toolbar">
           <select
             value={filter}
-            onChange={(e) => setFilter(e.target.value)}
+            onChange={(e) =>
+              setFilter(e.target.value)
+            }
           >
-            {statuses.map((status) => (
-              <option key={status}>{status}</option>
-            ))}
+            <option>All</option>
+            <option>Applied</option>
+            <option>Screening</option>
+            <option>Interview</option>
+            <option>Final Round</option>
+            <option>Offer</option>
+            <option>Rejected</option>
           </select>
+        </div>
 
-          <div className="tracker-actions">
-            <button onClick={undo}>Undo</button>
-            <button onClick={redo}>Redo</button>
+        {filteredApplications.length === 0 ? (
+          <div className="empty-state">
+            <h2>No applications yet</h2>
+            <p>
+              Apply to jobs and your pipeline will appear here.
+            </p>
           </div>
-        </div>
+        ) : (
+          <div className="tracker-list">
+            {filteredApplications.map((app) => (
+              <div
+                key={app.id}
+                className="tracker-card"
+              >
+                <div>
+                  <h3>{app.title}</h3>
+                  <p>{app.company}</p>
+                  <span>{app.location}</span>
+                  <small
+                    style={{
+                      display: "block",
+                      marginTop: 10,
+                      color: "#9ba7c2",
+                    }}
+                  >
+                    {app.date}
+                  </small>
+                </div>
 
-        <div className="tracker-list">
-          {mappedApplications.map((app) => (
-            <div key={app.id} className="tracker-card">
-              <div>
-                <h3>{app.title}</h3>
-                <p>{app.company}</p>
-              </div>
-
-              <div className="tracker-controls">
-                <select
-                  value={app.status}
-                  onChange={(e) =>
-                    updateStatus(app.id, e.target.value)
-                  }
+                <span
+                  className="status-pill"
+                  style={{
+                    background:
+                      statusColors[app.status],
+                  }}
                 >
-                  {statuses
-                    .filter((s) => s !== "All")
-                    .map((status) => (
-                      <option key={status}>{status}</option>
-                    ))}
-                </select>
-
-                <button onClick={() => withdraw(app.id)}>
-                  Withdraw
-                </button>
+                  {app.status}
+                </span>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
+
+        {applications.length > 0 && (
+          <div className="activity-box">
+            <h3>Recent Activity</h3>
+
+            {applications.slice(0, 5).map((app) => (
+              <p key={app.id}>
+                {app.date} — {app.status} update for{" "}
+                <strong>{app.title}</strong>
+              </p>
+            ))}
+          </div>
+        )}
       </main>
     </div>
   );

@@ -5,6 +5,7 @@ function Sidebar({ user, onLogout, setPage }) {
       { id: "career", label: "Career" },
       { id: "tracker", label: "Tracker" },
       { id: "skills", label: "Skills" },
+      { id: "resume", label: "Resume" },
     ];
   
     return (

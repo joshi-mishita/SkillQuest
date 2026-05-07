@@ -6,6 +6,7 @@ import Jobs from "./pages/Jobs";
 import Career from "./pages/Career";
 import Tracker from "./pages/Tracker";
 import Skills from "./pages/Skills";
+import Resume from "./pages/Resume";
 
 import {
   loadUser,
@@ -34,48 +35,42 @@ function App() {
     setPage("dashboard");
   };
 
+  const updateUser = (updates) => {
+    setUser((prev) => ({
+      ...prev,
+      ...updates,
+    }));
+  };
+
   if (!user) {
     return <Login onAuth={handleAuth} />;
   }
 
+  const sharedProps = {
+    user,
+    setPage,
+    handleLogout,
+    updateUser,
+  };
+
   if (page === "jobs") {
-    return (
-      <Jobs
-        user={user}
-        setPage={setPage}
-        handleLogout={handleLogout}
-      />
-    );
+    return <Jobs {...sharedProps} />;
   }
 
   if (page === "career") {
-    return (
-      <Career
-        user={user}
-        setPage={setPage}
-        handleLogout={handleLogout}
-      />
-    );
+    return <Career {...sharedProps} />;
   }
 
   if (page === "tracker") {
-    return (
-      <Tracker
-        user={user}
-        setPage={setPage}
-        handleLogout={handleLogout}
-      />
-    );
+    return <Tracker {...sharedProps} />;
   }
 
   if (page === "skills") {
-    return (
-      <Skills
-        user={user}
-        setPage={setPage}
-        handleLogout={handleLogout}
-      />
-    );
+    return <Skills {...sharedProps} />;
+  }
+
+  if (page === "resume") {
+    return <Resume {...sharedProps} />;
   }
 
   return (

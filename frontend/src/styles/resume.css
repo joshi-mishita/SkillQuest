@@ -1,0 +1,27 @@
+.resume-card,
+.resume-box {
+  padding: 24px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.05);
+  margin-bottom: 22px;
+}
+
+.resume-card textarea {
+  width: 100%;
+  min-height: 220px;
+  padding: 16px;
+  border-radius: 14px;
+  border: none;
+  outline: none;
+  resize: vertical;
+  background: #111827;
+  color: white;
+  margin-bottom: 18px;
+  font: inherit;
+}
+
+.resume-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}

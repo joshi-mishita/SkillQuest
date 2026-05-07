@@ -69,3 +69,123 @@
     display: flex;
     gap: 10px;
   }
+
+  .empty-state {
+    margin-top: 30px;
+    padding: 40px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    text-align: center;
+  }
+  
+  .empty-state h2 {
+    margin-bottom: 10px;
+  }
+  
+  .empty-state p {
+    color: #9ba7c2;
+    margin-bottom: 20px;
+  }
+  
+  .status-pill {
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: #6d5dfc;
+    color: white;
+  }
+  
+  .tracker-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 22px;
+    margin-top: 16px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .status-side {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-end;
+  }
+  
+  .status-select {
+    border: none;
+    padding: 8px 12px;
+    border-radius: 10px;
+    background: #111827;
+    color: white;
+  }
+  
+  .status-pill.applied {
+    background: #6d5dfc;
+  }
+  
+  .status-pill.interview {
+    background: #3b82f6;
+  }
+  
+  .status-pill.offer {
+    background: #22c55e;
+  }
+  
+  .status-pill.rejected {
+    background: #ef4444;
+  }
+  
+  .status-pill.withdrawn {
+    background: #f59e0b;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 24px;
+  }
+  
+  .stat-card,
+  .pipeline-box,
+  .activity-box {
+    background: rgba(255,255,255,0.05);
+    border-radius: 18px;
+    padding: 22px;
+  }
+  
+  .stat-card h2 {
+    margin: 0;
+    font-size: 2rem;
+  }
+  
+  .stat-card p {
+    margin-top: 8px;
+    color: #9ba7c2;
+  }
+  
+  .pipeline-box {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  
+  .pipeline-step {
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: #111827;
+  }
+  
+  .activity-box {
+    margin-top: 24px;
+  }
+  
+  .activity-box h3 {
+    margin-bottom: 14px;
+  }
+  
+  .activity-box p {
+    color: #c8d0e0;
+    margin-bottom: 10px;
+  }

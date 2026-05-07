@@ -13,14 +13,19 @@ import { formatMoney } from "../utils/helpers";
 import "../styles/dashboard.css";
 import "../styles/skills.css";
 
-function Skills({ user, setPage, handleLogout }) {
+function Skills({
+  user,
+  setPage,
+  handleLogout,
+  updateUser,
+}) {
   const [skills, setSkills] = useState(user.skills || []);
   const [newSkill, setNewSkill] = useState("");
   const [role, setRole] = useState(user.currentRole || "Student");
+  const [salary, setSalary] = useState(user.salary || 0);
 
   const level = computeLevel(user.xp || 0);
   const nextLevelXp = xpForLevel(level + 1);
-  const progress = user.xp || 0;
 
   const ownedClusters = useMemo(() => {
     return Object.entries(skillClusters).map(
@@ -38,27 +43,44 @@ function Skills({ user, setPage, handleLogout }) {
   const addSkill = () => {
     const trimmed = newSkill.trim();
 
-    if (!trimmed) return;
-    if (skills.includes(trimmed)) return;
+    if (!trimmed || skills.includes(trimmed)) return;
 
-    setSkills((prev) => [...prev, trimmed]);
+    const updated = [...skills, trimmed];
+
+    setSkills(updated);
+    updateUser({ skills: updated });
+
     setNewSkill("");
   };
 
   const removeSkill = (skillToRemove) => {
-    setSkills((prev) =>
-      prev.filter((skill) => skill !== skillToRemove)
+    const updated = skills.filter(
+      (skill) => skill !== skillToRemove
     );
+
+    setSkills(updated);
+    updateUser({ skills: updated });
+  };
+
+  const saveProfile = () => {
+    updateUser({
+      currentRole: role,
+      salary: Number(salary),
+    });
   };
 
   return (
     <div className="dashboard-layout">
-      <Sidebar user={user} onLogout={handleLogout} setPage={setPage} />
+      <Sidebar
+        user={user}
+        onLogout={handleLogout}
+        setPage={setPage}
+      />
 
       <main className="dashboard-main">
         <Topbar
           title="Skills & Profile"
-          subtitle="Manage your profile, skills, and growth."
+          subtitle="Manage profile and skills."
         />
 
         <div className="profile-card">
@@ -71,9 +93,22 @@ function Skills({ user, setPage, handleLogout }) {
             <input
               value={role}
               onChange={(e) => setRole(e.target.value)}
+              placeholder="Role"
             />
 
-            <span>{formatMoney(user.salary || 0)}</span>
+            <input
+              type="number"
+              value={salary}
+              onChange={(e) => setSalary(e.target.value)}
+              placeholder="Salary"
+            />
+
+            <button
+              className="primary-btn"
+              onClick={saveProfile}
+            >
+              Save
+            </button>
           </div>
         </div>
 
@@ -81,19 +116,23 @@ function Skills({ user, setPage, handleLogout }) {
           <div className="xp-head">
             <span>Level {level}</span>
             <span>
-              {progress} / {nextLevelXp} XP
+              {user.xp} / {nextLevelXp} XP
             </span>
           </div>
 
-          <ProgressBar value={progress} max={nextLevelXp} />
+          <ProgressBar
+            value={user.xp}
+            max={nextLevelXp}
+          />
         </div>
 
         <div className="skills-add-box">
           <input
-            type="text"
-            placeholder="Add skill..."
             value={newSkill}
-            onChange={(e) => setNewSkill(e.target.value)}
+            placeholder="Add skill..."
+            onChange={(e) =>
+              setNewSkill(e.target.value)
+            }
           />
 
           <button onClick={addSkill}>Add</button>
@@ -113,7 +152,10 @@ function Skills({ user, setPage, handleLogout }) {
 
         <div className="cluster-grid">
           {ownedClusters.map((item) => (
-            <div key={item.cluster} className="cluster-card">
+            <div
+              key={item.cluster}
+              className="cluster-card"
+            >
               <h3>{item.cluster}</h3>
               <p>
                 {item.owned}/{item.total} skills owned
@@ -142,11 +184,23 @@ function Skills({ user, setPage, handleLogout }) {
 
           <div className="skills-wrap">
             {badges.map((badge) => (
-              <span key={badge} className="badge-pill">
+              <span
+                key={badge}
+                className="badge-pill"
+              >
                 {badge}
               </span>
             ))}
           </div>
+        </div>
+
+        <div
+          style={{
+            marginTop: 20,
+            color: "#9ba7c2",
+          }}
+        >
+          Current salary: {formatMoney(user.salary || 0)}
         </div>
       </main>
     </div>
