@@ -1,0 +1,71 @@
+.tracker-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 26px;
+  }
+  
+  .mini-card {
+    padding: 22px;
+    border-radius: 18px;
+    background: rgba(255,255,255,0.05);
+  }
+  
+  .mini-card h2 {
+    color: #6d5dfc;
+    margin-bottom: 8px;
+  }
+  
+  .mini-card p {
+    color: #9ba7c2;
+  }
+  
+  .tracker-toolbar {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 24px;
+  }
+  
+  .tracker-toolbar select,
+  .tracker-actions button,
+  .tracker-controls select,
+  .tracker-controls button {
+    border: none;
+    outline: none;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: #111827;
+    color: white;
+    cursor: pointer;
+  }
+  
+  .tracker-actions {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .tracker-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .tracker-card {
+    padding: 22px;
+    border-radius: 18px;
+    background: rgba(255,255,255,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .tracker-card p {
+    color: #9ba7c2;
+    margin-top: 6px;
+  }
+  
+  .tracker-controls {
+    display: flex;
+    gap: 10px;
+  }

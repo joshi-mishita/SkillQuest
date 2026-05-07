@@ -1,0 +1,105 @@
+.search-box {
+    position: relative;
+    margin-bottom: 18px;
+  }
+  
+  .search-box input,
+  .filters select {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 14px;
+    border: none;
+    outline: none;
+    background: #111827;
+    color: white;
+  }
+  
+  .suggestions {
+    position: absolute;
+    top: 58px;
+    left: 0;
+    right: 0;
+    background: #111827;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.06);
+    z-index: 100;
+  }
+  
+  .suggestions button {
+    width: 100%;
+    border: none;
+    background: transparent;
+    color: white;
+    padding: 14px;
+    text-align: left;
+    cursor: pointer;
+  }
+  
+  .suggestions button:hover {
+    background: #1a2338;
+  }
+  
+  .recent-box {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    color: #9ba7c2;
+  }
+  
+  .recent-chip {
+    border: none;
+    background: #1a2338;
+    color: white;
+    border-radius: 999px;
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+  
+  .tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .tab {
+    border: none;
+    padding: 10px 16px;
+    border-radius: 10px;
+    background: #111827;
+    color: white;
+    cursor: pointer;
+  }
+  
+  .active-tab {
+    background: #6d5dfc;
+  }
+  
+  .filters {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  
+  .empty-box {
+    margin-top: 50px;
+    text-align: center;
+    color: #9ba7c2;
+  }
+
+  .bookmark-btn {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 5;
+    border: none;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: #1a2338;
+    color: white;
+    cursor: pointer;
+    font-size: 0.8rem;
+  }
