@@ -17,7 +17,6 @@ public:
     MaxHeap() = default;
 
     void push(const T& val) {
-        data.push_back(val);
         siftUp((int)data.size() - 1);
     }
 
